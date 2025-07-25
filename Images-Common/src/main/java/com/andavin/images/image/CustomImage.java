@@ -43,8 +43,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Collections.emptySet;
 
 /**
- * @since September 20, 2019
  * @author Andavin
+ * @since September 20, 2019
  */
 public class CustomImage implements Serializable {
 
@@ -100,7 +100,7 @@ public class CustomImage implements Serializable {
      * this image.
      *
      * @return The image creator or {@link #UNKNOWN_CREATOR} if
-     *         there is no creator.
+     * there is no creator.
      */
     public UUID getCreator() {
         return creator;
@@ -130,7 +130,7 @@ public class CustomImage implements Serializable {
      *
      * @param frameId The frame ID to get the section for.
      * @return The section or {@code null} if the
-     *         section is not found.
+     * section is not found.
      */
     public CustomImageSection getSection(int frameId) {
         return this.sections.get(frameId);
@@ -142,7 +142,7 @@ public class CustomImage implements Serializable {
      *
      * @param mapId The map ID to get the section for.
      * @return The section or {@code null} if the
-     *         section is not found.
+     * section is not found.
      */
     public CustomImageSection getSectionByMap(int mapId) {
 
@@ -160,17 +160,17 @@ public class CustomImage implements Serializable {
      * Show or hide this image for a player if they are within
      * 64 blocks or outside of 128 blocks of any of its sections.
      *
-     * @param player The player to show the image to.
+     * @param player   The player to show the image to.
      * @param location The location of the player to measure the distance from.
      */
     public void refresh(Player player, Location location) {
 
         for (CustomImageSection section : this.sections.values()) {
 
-            boolean sameWorld = location != null && section.getLocation().getWorld().equals(location.getWorld());
+            boolean sameWorld = location != null && (MapHelper.ignoreWorldCheck || section.getLocation().getWorld().equals(location.getWorld()));
             if (sameWorld) {
 
-                double distance = section.getLocation().distanceSquared(location);
+                double distance = distanceSquared(section.getLocation(), location);
                 if (distance <= MapHelper.showDistance * MapHelper.showDistance) {
                     section.show(player);
                 } else if (distance > MapHelper.hideDistance * MapHelper.hideDistance) {
@@ -180,6 +180,20 @@ public class CustomImage implements Serializable {
                 section.hide(player);
             }
         }
+    }
+
+    /**
+     * Calculate the squared distance between two {@link Location} objects.
+     *
+     * @param loc1 The first location.
+     * @param loc2 The second location.
+     * @return The squared distance between loc1 and loc2.
+     */
+    private double distanceSquared(Location loc1, Location loc2) {
+        double dx = loc1.getX() - loc2.getX();
+        double dy = loc1.getY() - loc2.getY();
+        double dz = loc1.getZ() - loc2.getZ();
+        return dx * dx + dy * dy + dz * dz;
     }
 
     /**
@@ -340,7 +354,7 @@ public class CustomImage implements Serializable {
      * are within the specified range of a {@link Location}.
      *
      * @param location The location to test within range of.
-     * @param range The range to test with.
+     * @param range    The range to test with.
      * @return If the location is in range of this image.
      */
     public boolean isInRange(Location location, int range) {

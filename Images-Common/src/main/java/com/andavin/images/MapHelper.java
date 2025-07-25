@@ -40,6 +40,7 @@ public abstract class MapHelper implements Versioned {
     protected static boolean invisible = true;
     public static int showDistance = 64;
     public static int hideDistance = 128;
+    public static boolean ignoreWorldCheck = false;
     private static final MapHelper BRIDGE = Versioned.getInstance(MapHelper.class);
 
     /**
